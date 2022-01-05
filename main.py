@@ -1,77 +1,76 @@
-# import random
 from random import shuffle, seed
-# import sys
-import numpy as np
+# import numpy as np
+
+class _SudokuSolver:
+    def __init__(self, sudoku):
+        self.width = sudoku.width
+        self.height = sudoku.height
+        self.size = sudoku.size
+        self.sudoku = sudoku
+
+    def _solve(self, raising=False):
+        blanks = self.__get_blanks()
+        blank_count = len(blanks)
+
+    def __get_blanks(self):
+        blanks = []
+        for i, row in enumerate(self.sudoku.board):
+            for j, cell in enumerate(row):
+                if cell == Sudoku._empty_cell_value:
+                    blanks += [(i, j)]
+        return blanks
 
 
 class Sudoku:
-    def __init__(self):
-        self.puzzle = np.zeros((9, 9), dtype=int)
-        self.sudoku_generator(0)
+    _empty_cell_value = None
 
-    def possible_value_at_position(self, row: int, col: int):
-        r = row//3*3
-        c = col//3*3
-        return {1, 2, 3, 4, 5, 6, 7, 8, 9}.difference(set(self.puzzle[r:r+3, c:c+3].flat)).difference(
-            set(self.puzzle[row, :])).difference(set(self.puzzle[:, col]))
+    def __init__(self, width=3, height=None, board=None, difficulty=-1, seeds=1):
+        self.board = board
+        self.width = width
+        self.height = height
+        if not height:
+            self.height = width
+        self.size = self.width * self.height
+        self.__difficulty = difficulty
 
-    def sudoku_generator(self, n: int):
-        if n == 81:
-            return True
-        (row, col) = divmod(n, 9)
-        if self.puzzle[row][col] > 0:
-            if self.sudoku_generator(n+1):
-                return True
+        assert self.width > 0, "Width must be 1 or above"
+        assert self.height > 0, "Height must be 1 or above"
+        assert self.size > 1, "Board must be greater than 1 X 1"
+
+        if board:
+            blank_count = 0
+            for row in self.board:
+                for i in range(len(row)):
+                    if not row[i] in range(1, self.size + 1):
+                        row[i] = Sudoku._empty_cell_value
+                        blank_count += 1
+            if difficulty == -1:
+                self.__difficulty = blank_count / self.size / self.size
         else:
-            remainders = list(self.possible_value_at_position(row, col))
-            shuffle(remainders)
-            for v in remainders:
-                self.puzzle[row][col] = v
-                if self.sudoku_generator(n+1):
-                    return True
-                self.puzzle[row][col] = 0
-        return False
+            positions = list(range(self.size))
+            seed(seeds)
+            shuffle(positions)
+            self.board = [[(i + 1) if i == positions[j] else
+                           Sudoku._empty_cell_value for i in range(self.size)] for j in range(self.size)]
 
-    def solution_count(self, n: int, nof_solution: int):
-        if nof_solution > 1:
-            return nof_solution
-        if n >= 81:
-            nof_solution += 1
-        (row, col) = divmod(n, 9)
-        if self.puzzle[row][col] > 0:
-            nof_solution = self.solution_count(n+1, nof_solution)
-        else:
-            fuckedlist = self.possible_value_at_position(row, col)
-            for v in fuckedlist:
-                self.puzzle[row][col] = v
-                nof_solution = self.solution_count(n+1, nof_solution)
-                self.puzzle[row][col] = 0
-        return nof_solution
+    def solve(self, raising=True):
+        return _SudokuSolver(self)._solve(raising)
 
-    def dig_holes(self, randomlist: [], n: int):
-        if n >= 81:
-            return
-        (row, col) = divmod(randomlist[n], 9)
-        fuck = self.puzzle[row][col]
-        if fuck > 0:
-            self.puzzle[row][col] = 0
-            nof_solution = self.solution_count(0, 0)
-            if nof_solution == 1:
-                self.puzzle[row][col] = 0
-            else:
-                self.puzzle[row][col] = fuck
-        self.dig_holes(randomlist, n+1)
+    def difficulty(self, difficulty):
+        assert 0 < difficulty < 1, "Difficulty must be between 0 and 1"
+        indices = list(range(self.size * self.size))
+        shuffle(indices)
+        problem_board = self.solve.board()
+        for index in indices[: int(difficulty * self.size * self.size)]:
+            row_index = index // self.size
+            col_index = index % self.size
+            problem_board[row_index][col_index] = Sudoku._empty_cell_value
+        return Sudoku(self.width, self.height, problem_board, difficulty)
+
+
 
 
 def main():
-    seed(1)
-    problem = Sudoku()
-    print(problem.puzzle)
-    randomlist = list(range(81))
-    shuffle(randomlist)
-    problem.dig_holes(randomlist, 0)
-    print("After")
-    print(problem.puzzle)
 
 
 if __name__ == "__main__":
