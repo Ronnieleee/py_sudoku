@@ -13,22 +13,19 @@ import numpy as np
 class Sudoku:
     _empty_cell_value = 0
 
-    def __init__(self, width=3, height=None, board=None, difficulty: float = 0.5):
-        """ Ramdom Create The Whole Sudoku.
+    def __init__(self, width: int = 3, height: int = 3, board: [[]] = None, difficulty: float = 0.5):
+        """ Random Create The Whole Sudoku.
 
             Keyword arguments:
             width:int         --- the width of the Block (default 3).
             height:int        --- the height of the Block (default 3).
             board:ndarray     --- the ndarray to store the data.
-            difficulty: float --- determine the numbers of the holes to be dug (default 0.5)
-                              --- holes / board.Size
+            difficulty: float --- determine the numbers of the holes to be dug (default 0.5) holes / board.Size.
             Returns:
 
         """
         self.width = width
         self.height = height
-        if not height:
-            self.height = width
         self.size = self.width * self.height
         self.__difficulty = difficulty
 
@@ -38,12 +35,12 @@ class Sudoku:
 
         if board is None:
             self.board = np.zeros((self.size, self.size), dtype=int)
-            self.__sudoku_generator()
+            self.__generator()
         else:
             self.board = board
 
     def generator(self):
-        """ Ramdom Create The Sudoku Puzzle.
+        """ Random Create The Sudoku Puzzle.
 
             Keyword arguments:
             create the puzzle by digging the holes and check the puzzle has only one ans.
@@ -59,10 +56,14 @@ class Sudoku:
 
             Keyword argument:
 
-            Returns:
+            Returns: True for succeed False for fail
 
         """
-        self.__sudoku_solver()
+        if self.__solver():
+            return True
+        else:
+            print("UnsolvableSudoku")
+            return False
 
     def difficulty(self, difficulty: float = 0.5):
         """ Set The Difficulty Of The Sudoku Puzzle.
@@ -87,7 +88,7 @@ class Sudoku:
         return numberset.difference(set(self.board[r:r+self.width, c:c+self.height].flat)).difference(
             set(self.board[row, :])).difference(set(self.board[:, col]))
 
-    def __sudoku_generator(self, n: int = 0):
+    def __generator(self, n: int = 0):
         """
         Private Function To Generator The Whole Sudoku.
         :param n: int = 0 (start place)
@@ -97,19 +98,19 @@ class Sudoku:
             return True
         (row, col) = divmod(n, self.size)
         if self.board[row][col] > 0:
-            if self.__sudoku_generator(n+1):
+            if self.__generator(n+1):
                 return True
         else:
             remainders = list(self.__possible_value_at_position(row, col))
             shuffle(remainders)
             for v in remainders:
                 self.board[row][col] = v
-                if self.__sudoku_generator(n+1):
+                if self.__generator(n+1):
                     return True
                 self.board[row][col] = 0
         return False
 
-    def __sudoku_solver(self, n: int = 0):
+    def __solver(self, n: int = 0):
         """
         Private Function To Solver The Sudoku Puzzle.
         :param n: int = 0 (start place)
@@ -119,13 +120,13 @@ class Sudoku:
             return True
         (row, col) = divmod(n, self.size)
         if self.board[row][col] > 0:
-            if self.__sudoku_solver(n + 1):
+            if self.__solver(n + 1):
                 return True
         else:
             remainders = list(self.__possible_value_at_position(row, col))
             for v in remainders:
                 self.board[row][col] = v
-                if self.__sudoku_solver(n + 1):
+                if self.__solver(n + 1):
                     return True
                 self.board[row][col] = 0
         return False

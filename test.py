@@ -14,6 +14,19 @@ from random import seed
 def main():
     seed(1)
     """
+    board = [
+        [0, 0, 7, 0, 4, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 8, 0, 0, 6],
+        [0, 4, 1, 0, 0, 0, 9, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 7, 0],
+        [0, 0, 0, 0, 0, 6, 0, 0, 0],
+        [0, 0, 8, 7, 0, 0, 2, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 2, 0, 0, 0, 0],
+        [8, 6, 0, 0, 7, 6, 0, 0, 5]
+    ]
+
+    """
     board = [[0, 3, 9, 2, 5, 8, 4, 1, 7],
              [4, 5, 7, 3, 1, 9, 8, 6, 2],
              [2, 8, 1, 7, 4, 6, 9, 5, 3],
@@ -24,8 +37,8 @@ def main():
              [3, 1, 5, 4, 6, 2, 7, 8, 9],
              [9, 6, 8, 1, 3, 7, 5, 2, 4]]
 
-
-        board = 
+    """
+    board = 
             [[6, 3, 9, 2, 5, 8, 4, 1, 7],
              [4, 5, 7, 3, 1, 9, 8, 6, 2],
              [2, 8, 1, 7, 4, 6, 9, 5, 3],
@@ -47,11 +60,17 @@ def main():
     fuck2 = problem.board
     print(fuck2)
     print("After Solver")
-    problem.solver()
-    fuck3 = problem.board
-    print(fuck3)
+    if problem.solver():
+        fuck3 = problem.board
+        print(fuck3)
+        print(np.equal(fuck3, fuck1).all())
 
-    print(np.equal(fuck3, fuck1).all())
+    puzzle = Sudoku(2, 3)
+    print(puzzle.board)
+    unsolvable = Sudoku(board=np.array(board, dtype=int))
+    print(unsolvable.board)
+    if unsolvable.solver():
+        print(unsolvable.board)
 
 
 if __name__ == "__main__":
