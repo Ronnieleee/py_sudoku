@@ -28,7 +28,7 @@ print(realans)
 
 ## create the sudoku puzzle
 ```python
-# set the difficulty 0~1 recommand below 0.7.
+# set the difficulty 0~1 recommend below 0.7.
 puzzle.difficulty(0.6)
 # get the sudoku puzzle by digging holes.
 puzzle.generator()

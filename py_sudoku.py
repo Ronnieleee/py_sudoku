@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 # /usr/bin/python3
 
-"""
-By Ronnieleee ronnie.lee@foxmail.com.
-https://github.com/Ronnieleee/py_sudoku.git
-"""
+# By Ronnieleee ronnie.lee@foxmail.com. https://github.com/Ronnieleee/py_sudoku.git
 
 from random import shuffle
 import numpy as np
